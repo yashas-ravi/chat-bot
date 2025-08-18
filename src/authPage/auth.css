@@ -1,0 +1,95 @@
+.signIn,.signUp, .forgotpass{
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(247, 241, 251);
+}
+
+.container{
+    width: 500px;
+    height: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2px solid rgb(211, 168, 247);
+    border-radius: 15px;
+    background-color: rgb(210, 200, 238);
+    padding: 10px;
+    box-shadow: 10px 10px 15px rgb(182, 157, 248);
+}
+
+.container h1{
+    color: rgb(110, 40, 209);
+    padding-bottom: 40px;
+    font-size: 28px;
+}
+
+.auth-form{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    align-items: left;
+    margin-bottom: 20px;
+}
+
+.auth-form label{
+    padding: 5px;
+    border-bottom: 10px;
+    color: black;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.auth-form input{
+    padding: 5px;
+    height: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border: none;
+    font-weight: 500;
+}
+
+.auth-form button{
+    margin-top: 20px;
+    height: 40px;
+    color: white;
+    font-weight: 500;
+    background-color: rgba(116, 49, 209, 0.782);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.container p{
+    color: black;
+    font-size: 15px;
+    padding: 10px;
+}
+
+.container a{
+    color: blue;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 480px) {
+.container{
+    width: 300px;
+}
+
+.container h1{
+    font-size: 20px;
+    text-align: center;
+}
+
+.auth-form label{
+    font-size: 15px;
+}
+
+}
