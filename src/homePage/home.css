@@ -6,6 +6,7 @@
     flex-direction: column;
     align-items: center;
     background-color: rgb(247, 241, 251);
+    overflow-y: hidden;
 }
 
 .header{
@@ -289,6 +290,10 @@
 
 @media screen and (max-width:480px){
 
+.home{
+    height: 100dvh;
+}
+
 .header h2{
     font-size: 25px;
     margin-left: 10px;
@@ -483,5 +488,7 @@
 
 .floatChatNew i:last-child{
     font-size: 20px;
+    background-color: rgb(173, 116, 252);
+    border-radius: 25px;
 }
 }

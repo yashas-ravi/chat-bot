@@ -32,46 +32,56 @@ const Home = () => {
         if(window.screen.width<481){
             setIsMobile(true);
         }
-    },[])
-    
+    },[]);
+
     const logout = async() => {
         await nhost.auth.signOut();
         toast.info("User loged out");
     }
 
     const handleDrag=(e)=>{
+        e.preventDefault();
         let startX=0, startY=0;
         const div = document.getElementById('floatChat');
-        div.addEventListener('mousedown',(e)=>{
-            startX=e.clientX;
-            startY=e.clientY;
-            document.addEventListener('mousemove',mouseMove);
-            document.addEventListener('mouseup',mouseUp);
+        div.addEventListener(isMobile?'touchstart':'mousedown',(e)=>{
+            // startX=isMobile?e.touches[0].clientX:e.clientX;
+            // startY=isMobile?e.touches[0].clientY:e.clientY;
+            document.addEventListener(isMobile?'touchmove':'mousemove',mouseMove);
+            document.addEventListener(isMobile?'touchend':'mouseup',mouseUp);
         });
             const mouseMove=(e)=>{
                 div.style.cursor='grabbing';
                 // newX=startX-e.clientX;
                 // newY=startY-e.clientY;
-                startX=e.clientX;
-                startY=e.clientY;
+                startX=isMobile?e.touches[0].clientX:e.clientX;
+                startY=isMobile?e.touches[0].clientY:e.clientY;
                 div.style.top=startY+'px';
                 div.style.left=startX+'px';
             };
             const mouseUp=(e)=>{
-                document.removeEventListener('mousemove',mouseMove);
+                document.removeEventListener(isMobile?'touchmove':'mousemove',mouseMove);
             };
       };
 
     const handleCreateChat = async()=>{
-        try{
-            await createChat({
+        try{    
+            const {data} = await createChat({
             variables:{userId,title:'chat'+Math.floor(Math.random() * 9000)}
-        })
+            });
+            if(!data){
+                 throw new Error("Failed to create chat");
+            }
+            else{
+                const sdata = JSON.parse(JSON.stringify(data));
+                toast.info("New Chat created");
+                setPresentChat(sdata.insert_chats_one.id);
+                setChatName(sdata.insert_chats_one.title);
+            }
         }catch(e){
-            console.log(e.message);
-            toast.error(e.message);
+        console.log(e.message);
+        toast.error(e.message);
         }
-    }
+      }
 
     const handleDeleteChat = async(id)=>{
         try{
@@ -159,7 +169,7 @@ const Home = () => {
             <button onClick={logout}>Logout</button>
             </div>)}
             </div>
-            {presentChat===null&&chats.length===0?(<div className='no-chat-message'><p>Create Chat and Start conversation</p></div>):presentChat===null&&chats.length>0?(<div className='no-chat-message'><p>Select Chat to Start</p></div>):(<div className="message-body">
+            {presentChat===null&&chats.length===0?(<div className='no-chat-message'><p>Create Chat and Start conversation</p></div>):presentChat===null&&chats.length>0?setPresentChat(chats[0].id) :(<div className="message-body">
                 {chats.length>0&&(<p className='message-lobby-title'>Chat: {chatName}</p>)}
                 <div className='messages'>
                 {messagesLoading?(<p className='no-messages-to-show'>Messages loading</p>):messages.length===0?(<p className='no-messages-to-show'>No Messages :)</p>):messages.map((message)=>(
@@ -182,7 +192,7 @@ const Home = () => {
             </div>)}
         </div>
         </div>
-        {isMobile?(<div id='floatChat' className='floatChatNew'><i className="fa-solid fa-arrows-up-down-left-right" onClick={(e)=>{handleDrag(e)}}></i><p>New Chat</p><i className="fa-solid fa-plus" onClick={handleCreateChat}></i></div>):''}
+        {isMobile?(<div id='floatChat' onTouchStart={(e)=>{handleDrag(e)}} className='floatChatNew'><i className="fa-solid fa-arrows-up-down-left-right" onClick={(e)=>{handleDrag(e)}}></i><p>New Chat</p><i className="fa-solid fa-plus" onClick={handleCreateChat}></i></div>):''}
         <div id='chatPopup' className='chatPopup'><p>Enter New Chat Name</p><input type="text" onChange={(e)=>setchangeChatName(e.target.value)} required/><button onClick={handleRenameChatDone}>Rename</button></div>
         </>
 } 
