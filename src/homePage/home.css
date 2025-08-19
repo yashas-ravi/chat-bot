@@ -97,7 +97,7 @@
 
 .chat-inputs input{
     width: 500px;
-    height: 30px;
+    height: 40px;
     color: black;
     font-size: 15px;
     font-weight: 500;
@@ -129,7 +129,7 @@
     background-color: rgb(190, 150, 246);
     border-radius: 25px;
     padding:5px;
-    margin-top: 10px;
+    margin: 15px 0px;
     width: 50%;
     display: flex;
     align-items: center;
@@ -147,9 +147,8 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 90%;
-    margin-top: 10px;
-   padding: 10px;
+    height: 85%;
+   padding: 20px 10px;
     border-top: 2px solid rgba(73, 1, 160, 0.305);
     row-gap: 10px;
     overflow-y: scroll;
@@ -162,14 +161,19 @@
     align-items: center;
     justify-content: space-between;
     border-radius: 10px;
-    padding: 10px;
+    padding: 20px;
     height: 30px;
     cursor: pointer;
 }
 
-.chatDiv i{
+.chatDivGi{
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+}
+
+.chatDivGi i{
     color: rgb(120, 50, 218);
-    padding: 5px;
 }
 
 .btnActive{
@@ -196,7 +200,7 @@
 .chatPopup input{
     border: 1px solid rgb(132, 59, 234);
     border-radius: 15px;
-    height: 20px;
+    height: 30px;
     padding: 5px;
 }
 
@@ -239,7 +243,7 @@
     width: fit-content;
     min-width: 30px;
     max-width: 70%;
-    padding: 10px 10px;
+    padding: 10px 20px;
     background-color: rgb(223, 200, 253);
     border-radius: 15px;
     border-radius: 15px;
@@ -251,15 +255,21 @@
 }
 
 .no-chat-message{
+    width: 100%;
+    height: 100%;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-chat-message p{
+    color: blueviolet;
     font-weight:500;
     font-size: 25px;
-    height: fit-content;
     text-align: center;
-    margin-top: 200px;
-    color: blueviolet;
-    border-bottom: 5px solid rgba(137, 43, 226, 0.33);
-    margin-left: 350px;
+    padding: 10px;
+    border: 5px solid rgba(137, 43, 226, 0.33);
 }
 
 .message-lobby-title{
@@ -313,18 +323,66 @@
     cursor: pointer;
 }
 
-.chat-menu{
-    display: none;
+.closeMenuHolder{
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+.closeMenu{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 5px;
+    background-color: rgb(225, 195, 253);
+    border-radius: 15px;
+    padding: 2px 5px;
+    margin-top: 10px;
+    margin-right: 10px;
+    border: 1px solid rgba(183, 118, 243, 0.552); 
+    cursor: pointer;
+}
+
+.closeMenu p{
+    font-size: 12px;
+}
+
+.closeMenu i{
+    font-size: 12px;
+    color: rgb(214, 4, 4);
+    background-color: rgba(244, 119, 119, 0.344);
+    border-radius: 15px;
+    padding: 2px;
+}
+
+.chat-menu.open{
+    display: flex;
     position: absolute;
     width: 250px;
-    height: 600px;
-    right: -200px;
+    height: 620px;
+    top:10px;
+    right: 10px;
     background-color: rgba(239, 234, 247, 0.966);
     border: 1px solid rgb(159, 98, 245);
     border-radius: 5px;
 }
 
+.chat-menu.close{
+    display: none;
+    position: absolute;
+    width: 250px;
+    height: 600px;
+    top:10px;
+    right: -200px;
+    background-color: rgba(239, 234, 247, 0.966);
+    border: 1px solid rgb(159, 98, 245);
+    border-radius: 5px; 
+}
+
 .listChats{
+    padding-top: 20px;
     height: 450px;
     border-top: 2px solid rgba(159, 98, 245, 0.2);
     border-bottom: 2px solid rgba(159, 98, 245, 0.2);
@@ -375,9 +433,9 @@
     left: 10%;
 }
 
-.no-chat-message{
-    margin-top: 100px;
-    margin-left: 80px;
+.no-chat-message p{
+    max-width: 300px;
+    font-size: 20px;
 }
 
 .message-left{
@@ -390,6 +448,40 @@
 }
 
 .no-messages-to-show{
+    font-size: 20px;
+}
+
+.floatChatNew{
+    position: fixed;
+    width: 120px;
+    height:30px;
+    bottom: 100px;
+    right:  30px;
+    background-color: rgb(190, 150, 246);
+    border: 2px solid rgb(132, 59, 234);
+    padding: 5px;
+    border-radius: 25px;
+    cursor: pointer;
+    z-index: 999;
+    display: flex;
+    align-items: center ;
+    justify-content: space-between;
+    box-shadow: 0px 0px 40px 5px rgba(104, 3, 246, 0.5);
+}
+
+.floatChatNew p{
+    color: rgb(48, 10, 100);
+    font-size: 10px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.floatChatNew i{
+    color: rgb(48, 10, 100);
+    font-size: 12px;
+}
+
+.floatChatNew i:last-child{
     font-size: 20px;
 }
 }

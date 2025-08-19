@@ -23,8 +23,9 @@ const SignIn = () => {
             const res = await nhost.auth.signIn({email:email,password:password});
             if(res.error){
                 if(res.error.message==="User is already signed in"){
-                    nhost.auth.signOut();
-                    toast.info("Please try again");
+                    toast.info("Login Success");
+                    await new Promise(reslove=>setTimeout(reslove,1000));
+                    navigate('/');
                 }
                 else{
                 console.log(res.error.message);

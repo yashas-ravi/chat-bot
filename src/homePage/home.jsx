@@ -10,7 +10,8 @@ const Home = () => {
     const [userId, setUserId] = useState("");
     const [chatId, setChatId] = useState("");
     const [chatName, setChatName]=useState("");
-    const [isMobile, setIsMobile]=useState(false);  
+    const [isMobile, setIsMobile]=useState(false);
+    const [showChat, setShowChat]=useState("chat-menu close");
     const [presentChat, setPresentChat]= useState(null);
     const [inputMessage, setInputMessage]=useState("");
     const [botresponse, setBotResponse] = useState(null);
@@ -28,37 +29,38 @@ const Home = () => {
     useEffect(()=>{
         setEmail(nhost.auth.getUser().email);
         setUserId(nhost.auth.getUser().id);
-        if(window.screen.width<480){
+        if(window.screen.width<481){
             setIsMobile(true);
         }
     },[])
-
     
     const logout = async() => {
         await nhost.auth.signOut();
         toast.info("User loged out");
     }
 
-    const handleMenu=()=>{
-        const menuBtn = document.getElementById('menuBtn');
-        const authMenu = document.getElementById('authTab');
-        const chatMenu = document.getElementById('chatMenu');
-
-        menuBtn.addEventListener('click',()=>{
-            if(chatMenu.style.display==='flex'){
-            authMenu.style.display='none';
-            chatMenu.style.display='none';
-            authMenu.style.right='-200px';
-            chatMenu.style.right='-200px';
-            }
-            else{
-            authMenu.style.display='flex';
-            chatMenu.style.display='flex';
-            authMenu.style.right='90px';
-            chatMenu.style.right='10px';
-            }
+    const handleDrag=(e)=>{
+        let startX=0, startY=0;
+        const div = document.getElementById('floatChat');
+        div.addEventListener('mousedown',(e)=>{
+            startX=e.clientX;
+            startY=e.clientY;
+            document.addEventListener('mousemove',mouseMove);
+            document.addEventListener('mouseup',mouseUp);
         });
-    }
+            const mouseMove=(e)=>{
+                div.style.cursor='grabbing';
+                // newX=startX-e.clientX;
+                // newY=startY-e.clientY;
+                startX=e.clientX;
+                startY=e.clientY;
+                div.style.top=startY+'px';
+                div.style.left=startX+'px';
+            };
+            const mouseUp=(e)=>{
+                document.removeEventListener('mousemove',mouseMove);
+            };
+      };
 
     const handleCreateChat = async()=>{
         try{
@@ -113,7 +115,6 @@ const Home = () => {
 
     const handleMessageSend=async(e)=>{
         e.preventDefault();
-        const scrollMsg = document.getElementById('scroll-msg');
         document.getElementById("chat-input-holder").value='';
         if(!inputMessage.trim())return;
         try{
@@ -123,9 +124,10 @@ const Home = () => {
             setBotResponse(data.sendMessage.content);
         }catch(e){
             console.log(e.message);
-            // toast.error(e.message);
+            if(e.message==="Foreign key violation. insert or update on table \"messages\" violates foreign key constraint \"messages_chat_is_fkey1\""){
+                toast.info("Select a chat")
+            }
         }
-        scrollMsg.scrollIntoView();
         setInputMessage("");
     }
 
@@ -136,49 +138,51 @@ const Home = () => {
             <p>{email}</p>  
             <button onClick={logout}>Logout</button>
             </div>)}
-            <div id='menuBtn' className='menuBtn' onClick={handleMenu}><i class="fa-solid fa-bars"></i></div>
+            <div id='menuBtn' className='menuBtn' onClick={()=>setShowChat('chat-menu open')}><i className="fa-solid fa-bars"></i></div>
         </div>
         <div className="container-body">
-            <div id='chatMenu' className='chat-menu'>
-                <div className='newChatDiv'>
+            <div className={showChat}>
+                {!isMobile?(<div className='newChatDiv'>
                 <p onClick={handleCreateChat}>New Chat +</p>
-                </div>
+                </div>):(<div className='closeMenuHolder'><div onClick={()=>setShowChat('chat-menu close')} className='closeMenu'><p>close</p><i className="fa-solid fa-xmark"></i></div></div>)}
                 <div className='listChats'>
                 {chatsLoading||chatDeleteLoading||chatCreateLoading||chatUpdateLoading?(<p>Loading Chats...</p>):chats.length===0?(<p>No Chats</p>):(chats.map((chat)=>(
                     <div onClick={()=>{setPresentChat(chat.id);setChatName(chat.title)}} key={chat.id} className={`${presentChat===chat.id?'chatDiv btnActive':'chatDiv'}`}>
                         <p>{chat.title}</p>
-                        <div><i class="fa-solid fa-pen-to-square" onClick={()=>{handleRenameChat(chat.id)}}></i>
-                        <i class="fa-solid fa-trash" onClick={()=>handleDeleteChat(chat.id)}></i>
+                        <div className='chatDivGi'><i className="fa-solid fa-pen-to-square" onClick={()=>{handleRenameChat(chat.id)}}></i>
+                        <i className="fa-solid fa-trash" onClick={()=>handleDeleteChat(chat.id)}></i>
                         </div>
                     </div>)))}
                 </div>
-            {isMobile&&(<div id='authTab' className='userAuthTab'>
+            {isMobile&&(<div className='userAuthTab'>
             <p>{email}</p>  
             <button onClick={logout}>Logout</button>
             </div>)}
             </div>
-            {presentChat===null&&chats.length===0?(<p className='no-chat-message'>Create Chat and Start conversation</p>):presentChat===null&&chats.length>0?(<p className='no-chat-message'>Select Chat to Start</p>):(<div className="message-body">
-                <p className='message-lobby-title'>Chat: {chatName}</p>
+            {presentChat===null&&chats.length===0?(<div className='no-chat-message'><p>Create Chat and Start conversation</p></div>):presentChat===null&&chats.length>0?(<div className='no-chat-message'><p>Select Chat to Start</p></div>):(<div className="message-body">
+                {chats.length>0&&(<p className='message-lobby-title'>Chat: {chatName}</p>)}
                 <div className='messages'>
                 {messagesLoading?(<p className='no-messages-to-show'>Messages loading</p>):messages.length===0?(<p className='no-messages-to-show'>No Messages :)</p>):messages.map((message)=>(
                     <div className={message.sender==='ai'?`message-left`:`message-right`} key={message.id}>
-                        <p id='scroll-msg'>{message.content}</p>
+                        <p>{message.content}</p>
                     </div>
                 ))}
-                {sendMessageLoading?(<p>Typing...</p>):''}
+                {insertMessageLoading?(<div className='message-right'><p>Sending...</p></div>):''}
+                {sendMessageLoading?(<div className='message-left'><p>Typing...</p></div>):''}
                 {botresponse&&!messages.some((msg)=>msg.content===botresponse)&&(
                     <div className='message-left'>
                         <p>{botresponse}</p>
                     </div>
                 )}
                 </div>
-                <div className="chat-inputs">
+                {chats.length>0&&(<div id='chatInputs' className="chat-inputs">
                     <input id='chat-input-holder' type="text" onChange={(e)=>{setInputMessage(e.target.value);}} placeholder='Enter your message or question...'/>
                     <button onClick={(e)=>handleMessageSend(e)} disabled={insertMessageLoading||sendMessageLoading}>Send</button>
-                </div>
+                </div>)}
             </div>)}
         </div>
         </div>
+        {isMobile?(<div id='floatChat' className='floatChatNew'><i className="fa-solid fa-arrows-up-down-left-right" onClick={(e)=>{handleDrag(e)}}></i><p>New Chat</p><i className="fa-solid fa-plus" onClick={handleCreateChat}></i></div>):''}
         <div id='chatPopup' className='chatPopup'><p>Enter New Chat Name</p><input type="text" onChange={(e)=>setchangeChatName(e.target.value)} required/><button onClick={handleRenameChatDone}>Rename</button></div>
         </>
 } 
